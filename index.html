@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estados de la Materia - Actividad Interactiva</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: transparent;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #333;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9em;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        th:nth-child(2) { border-bottom-color: #ff6b6b; }
+        th:nth-child(3) { border-bottom-color: #4ecdc4; }
+        th:nth-child(4) { border-bottom-color: #45b7d1; }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .characteristic {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            border-right: 1px solid #e0e0e0;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        td:nth-child(2) .drop-zone { border-color: #ff6b6b; }
+        td:nth-child(3) .drop-zone { border-color: #4ecdc4; }
+        td:nth-child(4) .drop-zone { border-color: #45b7d1; }
+
+        .drop-zone {
+            min-height: 50px;
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            cursor: pointer;
+            font-size: 0.8em;
+            padding: 6px;
+        }
+
+        .drop-zone:hover {
+            background: #f0f0f0;
+            transform: scale(1.01);
+        }
+
+        .drop-zone.dragover {
+            background: #e8f5e8;
+            transform: scale(1.02);
+        }
+
+        .drop-zone.filled {
+            background: #f0f0f0;
+            border-style: solid;
+        }
+
+        td:nth-child(2) .drop-zone.filled { background: #fff0f0; border-color: #ff6b6b; }
+        td:nth-child(3) .drop-zone.filled { background: #f0fffe; border-color: #4ecdc4; }
+        td:nth-child(4) .drop-zone.filled { background: #f0f8ff; border-color: #45b7d1; }
+
+        .drop-zone.correct {
+            animation: correctPulse 0.5s ease;
+        }
+
+        .drop-zone.incorrect {
+            animation: incorrectShake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .options-container {
+            margin: 20px 0;
+        }
+
+        .options-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            color: #333;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid #e0e0e0;
+            font-size: 0.8em;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #ccc;
+        }
+
+        .option.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            transform: rotate(5deg);
+        }
+
+        .option.used {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-check {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #45a049;
+        }
+
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #da190b;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .score {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            table {
+                font-size: 0.8em;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .drop-zone {
+                min-height: 45px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Estados de la Materia</h1>
+            <p>Completa la tabla arrastrando las características correctas</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Característica</th>
+                        <th>Gases</th>
+                        <th>Líquidos</th>
+                        <th>Sólidos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="characteristic">Volumen y forma</td>
+                        <td><div class="drop-zone" data-correct="gas-volume"></div></td>
+                        <td><div class="drop-zone" data-correct="liquid-volume"></div></td>
+                        <td><div class="drop-zone" data-correct="solid-volume"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="characteristic">Distancia entre partículas</td>
+                        <td><div class="drop-zone" data-correct="gas-distance"></div></td>
+                        <td><div class="drop-zone" data-correct="liquid-distance"></div></td>
+                        <td><div class="drop-zone" data-correct="solid-distance"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="characteristic">Movimiento de partículas</td>
+                        <td><div class="drop-zone" data-correct="gas-movement"></div></td>
+                        <td><div class="drop-zone" data-correct="liquid-movement"></div></td>
+                        <td><div class="drop-zone" data-correct="solid-movement"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="characteristic">Interacción entre partículas</td>
+                        <td><div class="drop-zone" data-correct="gas-interaction"></div></td>
+                        <td><div class="drop-zone" data-correct="liquid-interaction"></div></td>
+                        <td><div class="drop-zone" data-correct="solid-interaction"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="options-container">
+            <div class="options-title">Arrastra las opciones:</div>
+            <div class="options-grid">
+                <div class="option" draggable="true" data-id="gas-volume">No poseen volumen fijo, se adapta al recipiente</div>
+                <div class="option" draggable="true" data-id="liquid-volume">Volumen fijo, toma forma del recipiente</div>
+                <div class="option" draggable="true" data-id="solid-volume">Volumen y forma definidos</div>
+                <div class="option" draggable="true" data-id="gas-distance">Lejanas entre sí</div>
+                <div class="option" draggable="true" data-id="liquid-distance">Cercanas unas a otras</div>
+                <div class="option" draggable="true" data-id="solid-distance">Muy cercanas entre sí</div>
+                <div class="option" draggable="true" data-id="gas-movement">Se mueven al azar, altas velocidades</div>
+                <div class="option" draggable="true" data-id="liquid-movement">Se mueven al azar, cercanas</div>
+                <div class="option" draggable="true" data-id="solid-movement">Vibran en posiciones fijas</div>
+                <div class="option" draggable="true" data-id="gas-interaction">Débil</div>
+                <div class="option" draggable="true" data-id="liquid-interaction">Mayor que en gases</div>
+                <div class="option" draggable="true" data-id="solid-interaction">Fuerte</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-check" onclick="checkAnswers()">Verificar</button>
+            <button class="btn btn-reset" onclick="resetGame()">Reiniciar</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <div class="score" id="score">Progreso: 0/12</div>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let correctAnswers = 0;
+        let totalAnswers = 12;
+
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('dragstart', function(e) {
+                draggedElement = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            option.addEventListener('dragend', function(e) {
+                this.classList.remove('dragging');
+                draggedElement = null;
+            });
+        });
+
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', function(e) {
+                this.classList.remove('dragover');
+            });
+
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                if (draggedElement && !draggedElement.classList.contains('used')) {
+                    if (this.querySelector('.option')) {
+                        const oldOption = this.querySelector('.option');
+                        oldOption.classList.remove('used');
+                        document.querySelector('.options-grid').appendChild(oldOption);
+                    }
+                    
+                    const optionClone = draggedElement.cloneNode(true);
+                    optionClone.draggable = false;
+                    this.innerHTML = '';
+                    this.appendChild(optionClone);
+                    this.classList.add('filled');
+                    
+                    draggedElement.classList.add('used');
+                    updateProgress();
+                }
+            });
+        });
+
+        function updateProgress() {
+            const filledZones = document.querySelectorAll('.drop-zone.filled').length;
+            const progressPercent = (filledZones / totalAnswers) * 100;
+            document.querySelector('.progress-fill').style.width = progressPercent + '%';
+            document.getElementById('score').textContent = `Progreso: ${filledZones}/${totalAnswers}`;
+        }
+
+        function checkAnswers() {
+            const feedback = document.getElementById('feedback');
+            let correct = 0;
+            let incorrect = 0;
+
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                const correctId = zone.getAttribute('data-correct');
+                const placedOption = zone.querySelector('.option');
+                
+                if (placedOption) {
+                    const placedId = placedOption.getAttribute('data-id');
+                    
+                    if (placedId === correctId) {
+                        zone.classList.add('correct');
+                        zone.classList.remove('incorrect');
+                        correct++;
+                    } else {
+                        zone.classList.add('incorrect');
+                        zone.classList.remove('correct');
+                        incorrect++;
+                    }
+                }
+            });
+
+            setTimeout(() => {
+                document.querySelectorAll('.drop-zone').forEach(zone => {
+                    zone.classList.remove('correct', 'incorrect');
+                });
+            }, 1000);
+
+            feedback.style.display = 'block';
+            if (correct === totalAnswers) {
+                feedback.className = 'feedback success';
+                feedback.innerHTML = '🎉 ¡Perfecto! Has completado toda la tabla correctamente.';
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `📚 ${correct} correctas, ${incorrect} incorrectas. ¡Sigue intentando!`;
+            }
+
+            correctAnswers = correct;
+        }
+
+        function resetGame() {
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.innerHTML = '';
+                zone.classList.remove('filled', 'correct', 'incorrect');
+            });
+
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('used');
+                option.draggable = true;
+            });
+
+            const optionsGrid = document.querySelector('.options-grid');
+            document.querySelectorAll('.option').forEach(option => {
+                if (option.parentElement !== optionsGrid) {
+                    optionsGrid.appendChild(option);
+                }
+            });
+
+            document.getElementById('feedback').style.display = 'none';
+            correctAnswers = 0;
+            updateProgress();
+        }
+    </script>
+</body>
+</html>
