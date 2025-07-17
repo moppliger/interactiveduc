@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estados de la Materia - Actividad Interactiva</title>
+    <title>Estados de la Materia</title>
     <style>
         * {
             margin: 0;
@@ -12,257 +12,297 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: transparent;
-            min-height: 100vh;
-            padding: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            padding: 20px;
+            color: #333;
+            line-height: 1.4;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            color: #2c3e50;
-            font-size: 1.8em;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 1em;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #f0f0f0;
-            border-radius: 3px;
-            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        .progress-fill {
+        .header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+
+        .progress {
+            height: 4px;
+            background: #e9ecef;
+            margin-top: 12px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
             height: 100%;
-            background: #4CAF50;
+            background: linear-gradient(90deg, #28a745, #20c997);
             width: 0%;
             transition: width 0.3s ease;
         }
 
-        .table-container {
-            overflow-x: auto;
-            margin: 20px 0;
+        .table-section {
+            padding: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #e0e0e0;
+            font-size: 0.9em;
         }
 
         th {
             background: #f8f9fa;
-            color: #333;
-            padding: 12px;
+            padding: 12px 8px;
             text-align: center;
             font-weight: 600;
-            font-size: 0.9em;
-            border-bottom: 2px solid #e0e0e0;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            font-size: 0.85em;
         }
 
-        th:nth-child(2) { border-bottom-color: #ff6b6b; }
-        th:nth-child(3) { border-bottom-color: #4ecdc4; }
-        th:nth-child(4) { border-bottom-color: #45b7d1; }
+        th:first-child {
+            background: #e9ecef;
+            text-align: left;
+            width: 180px;
+        }
 
         td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #f0f0f0;
-            position: relative;
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            vertical-align: top;
         }
 
         .characteristic {
             background: #f8f9fa;
-            font-weight: 600;
-            color: #333;
-            border-right: 1px solid #e0e0e0;
-            text-align: left;
-            font-size: 0.9em;
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.85em;
         }
-
-        td:nth-child(2) .drop-zone { border-color: #ff6b6b; }
-        td:nth-child(3) .drop-zone { border-color: #4ecdc4; }
-        td:nth-child(4) .drop-zone { border-color: #45b7d1; }
 
         .drop-zone {
             min-height: 50px;
-            border: 2px dashed #ddd;
-            border-radius: 6px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            background: #fafafa;
             cursor: pointer;
-            font-size: 0.8em;
-            padding: 6px;
+            transition: all 0.2s ease;
+            position: relative;
         }
 
         .drop-zone:hover {
-            background: #f0f0f0;
-            transform: scale(1.01);
+            border-color: #adb5bd;
+            background: #f1f3f4;
         }
 
         .drop-zone.dragover {
-            background: #e8f5e8;
-            transform: scale(1.02);
-        }
-
-        .drop-zone.filled {
-            background: #f0f0f0;
+            border-color: #28a745;
+            background: #d1ecf1;
             border-style: solid;
         }
 
-        td:nth-child(2) .drop-zone.filled { background: #fff0f0; border-color: #ff6b6b; }
-        td:nth-child(3) .drop-zone.filled { background: #f0fffe; border-color: #4ecdc4; }
-        td:nth-child(4) .drop-zone.filled { background: #f0f8ff; border-color: #45b7d1; }
-
-        .drop-zone.correct {
-            animation: correctPulse 0.5s ease;
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: #28a745;
+            background: white;
+            padding: 6px;
         }
 
-        .drop-zone.incorrect {
-            animation: incorrectShake 0.5s ease;
-        }
-
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes incorrectShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .options-container {
-            margin: 20px 0;
-        }
-
-        .options-title {
-            font-size: 1em;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .option {
-            background: #f8f9fa;
-            color: #333;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: grab;
-            transition: all 0.3s ease;
-            text-align: center;
-            font-weight: 500;
-            border: 1px solid #e0e0e0;
+        .drop-zone .concept {
+            width: 100%;
             font-size: 0.8em;
+            line-height: 1.3;
+            cursor: pointer;
         }
 
-        .option:hover {
-            background: #e9ecef;
-            border-color: #ccc;
+        .concepts-section {
+            padding: 0 20px 20px;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
         }
 
-        .option.dragging {
+        .concepts-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #495057;
+            margin: 16px 0 12px;
+            text-align: center;
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+        }
+
+        .concept {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 0.8em;
+            cursor: grab;
+            transition: all 0.2s ease;
+            text-align: center;
+            line-height: 1.3;
+            position: relative;
+        }
+
+        .concept:hover {
+            border-color: #adb5bd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .concept.dragging {
             opacity: 0.5;
             cursor: grabbing;
-            transform: rotate(5deg);
+            transform: rotate(2deg);
         }
 
-        .option.used {
-            opacity: 0.4;
+        .concept.used {
+            opacity: 0.3;
             cursor: not-allowed;
-            background: #f0f0f0;
-            color: #999;
+            background: #f8f9fa;
+            color: #6c757d;
         }
+
+        /* Colores por categoría */
+        .concept[data-category="volumen"],
+        .drop-zone.filled .concept[data-category="volumen"] {
+            border-left: 4px solid #007bff;
+            background: #f8f9ff;
+        }
+
+        .concept[data-category="distancia"],
+        .drop-zone.filled .concept[data-category="distancia"] {
+            border-left: 4px solid #28a745;
+            background: #f8fff8;
+        }
+
+        .concept[data-category="movimiento"],
+        .drop-zone.filled .concept[data-category="movimiento"] {
+            border-left: 4px solid #ffc107;
+            background: #fffef8;
+        }
+
+        .concept[data-category="interaccion"],
+        .drop-zone.filled .concept[data-category="interaccion"] {
+            border-left: 4px solid #dc3545;
+            background: #fff8f8;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75em;
+            color: #6c757d;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .legend-color.volumen { background: #007bff; }
+        .legend-color.distancia { background: #28a745; }
+        .legend-color.movimiento { background: #ffc107; }
+        .legend-color.interaccion { background: #dc3545; }
 
         .controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 12px;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
         }
 
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9em;
-            font-weight: 600;
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            color: #495057;
+            font-size: 0.85em;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
-        .btn-check {
-            background: #4CAF50;
+        .btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .btn-primary {
+            background: #007bff;
             color: white;
+            border-color: #007bff;
         }
 
-        .btn-check:hover {
-            background: #45a049;
+        .btn-primary:hover {
+            background: #0056b3;
+            border-color: #0056b3;
         }
 
-        .btn-reset {
-            background: #f44336;
+        .btn-secondary {
+            background: #6c757d;
             color: white;
+            border-color: #6c757d;
         }
 
-        .btn-reset:hover {
-            background: #da190b;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .btn-secondary:hover {
+            background: #545b62;
+            border-color: #545b62;
         }
 
         .feedback {
-            margin-top: 15px;
+            margin: 16px 20px;
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
             text-align: center;
-            font-size: 0.9em;
-            font-weight: 500;
             display: none;
         }
 
         .feedback.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
 
         .feedback.error {
@@ -273,32 +313,43 @@
 
         .score {
             text-align: center;
-            margin-top: 10px;
-            font-size: 0.9em;
-            font-weight: 600;
-            color: #333;
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-bottom: 8px;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 16px;
             }
             
             .header h1 {
-                font-size: 1.5em;
+                font-size: 1.4em;
+            }
+            
+            .table-section {
+                padding: 16px;
+                overflow-x: auto;
             }
             
             table {
                 font-size: 0.8em;
             }
             
-            .options-grid {
+            th:first-child {
+                width: 140px;
+            }
+            
+            .concepts-grid {
                 grid-template-columns: 1fr;
             }
             
-            .drop-zone {
-                min-height: 45px;
-                font-size: 0.75em;
+            .legend {
+                gap: 12px;
             }
         }
     </style>
@@ -307,13 +358,14 @@
     <div class="container">
         <div class="header">
             <h1>Estados de la Materia</h1>
-            <p>Completa la tabla arrastrando las características correctas</p>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
+            <p>Arrastra cada concepto a la celda correspondiente</p>
+            <div class="progress">
+                <div class="progress-bar"></div>
             </div>
+            <div class="score">Completado: 0/12</div>
         </div>
 
-        <div class="table-container">
+        <div class="table-section">
             <table>
                 <thead>
                     <tr>
@@ -332,175 +384,256 @@
                     </tr>
                     <tr>
                         <td class="characteristic">Distancia entre partículas</td>
-                        <td><div class="drop-zone" data-correct="gas-distance"></div></td>
-                        <td><div class="drop-zone" data-correct="liquid-distance"></div></td>
-                        <td><div class="drop-zone" data-correct="solid-distance"></div></td>
+                        <td><div class="drop-zone" data-correct="gas-distancia"></div></td>
+                        <td><div class="drop-zone" data-correct="liquid-distancia"></div></td>
+                        <td><div class="drop-zone" data-correct="solid-distancia"></div></td>
                     </tr>
                     <tr>
                         <td class="characteristic">Movimiento de partículas</td>
-                        <td><div class="drop-zone" data-correct="gas-movement"></div></td>
-                        <td><div class="drop-zone" data-correct="liquid-movement"></div></td>
-                        <td><div class="drop-zone" data-correct="solid-movement"></div></td>
+                        <td><div class="drop-zone" data-correct="gas-movimiento"></div></td>
+                        <td><div class="drop-zone" data-correct="liquid-movimiento"></div></td>
+                        <td><div class="drop-zone" data-correct="solid-movimiento"></div></td>
                     </tr>
                     <tr>
                         <td class="characteristic">Interacción entre partículas</td>
-                        <td><div class="drop-zone" data-correct="gas-interaction"></div></td>
-                        <td><div class="drop-zone" data-correct="liquid-interaction"></div></td>
-                        <td><div class="drop-zone" data-correct="solid-interaction"></div></td>
+                        <td><div class="drop-zone" data-correct="gas-interaccion"></div></td>
+                        <td><div class="drop-zone" data-correct="liquid-interaccion"></div></td>
+                        <td><div class="drop-zone" data-correct="solid-interaccion"></div></td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="options-container">
-            <div class="options-title">Arrastra las opciones:</div>
-            <div class="options-grid">
-                <div class="option" draggable="true" data-id="gas-volume">No poseen volumen fijo, se adapta al recipiente</div>
-                <div class="option" draggable="true" data-id="liquid-volume">Volumen fijo, toma forma del recipiente</div>
-                <div class="option" draggable="true" data-id="solid-volume">Volumen y forma definidos</div>
-                <div class="option" draggable="true" data-id="gas-distance">Lejanas entre sí</div>
-                <div class="option" draggable="true" data-id="liquid-distance">Cercanas unas a otras</div>
-                <div class="option" draggable="true" data-id="solid-distance">Muy cercanas entre sí</div>
-                <div class="option" draggable="true" data-id="gas-movement">Se mueven al azar, altas velocidades</div>
-                <div class="option" draggable="true" data-id="liquid-movement">Se mueven al azar, cercanas</div>
-                <div class="option" draggable="true" data-id="solid-movement">Vibran en posiciones fijas</div>
-                <div class="option" draggable="true" data-id="gas-interaction">Débil</div>
-                <div class="option" draggable="true" data-id="liquid-interaction">Mayor que en gases</div>
-                <div class="option" draggable="true" data-id="solid-interaction">Fuerte</div>
+        <div class="concepts-section">
+            <div class="concepts-title">Conceptos disponibles</div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color volumen"></div>
+                    <span>Volumen y forma</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color distancia"></div>
+                    <span>Distancia</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color movimiento"></div>
+                    <span>Movimiento</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color interaccion"></div>
+                    <span>Interacción</span>
+                </div>
+            </div>
+
+            <div class="concepts-grid">
+                <div class="concept" draggable="true" data-id="gas-volume" data-category="volumen">
+                    No poseen volumen fijo, se adaptan al recipiente
+                </div>
+                <div class="concept" draggable="true" data-id="liquid-volume" data-category="volumen">
+                    Volumen fijo, adoptan la forma del recipiente
+                </div>
+                <div class="concept" draggable="true" data-id="solid-volume" data-category="volumen">
+                    Volumen y forma definidos y rígidos
+                </div>
+                <div class="concept" draggable="true" data-id="gas-distancia" data-category="distancia">
+                    Partículas muy separadas entre sí
+                </div>
+                <div class="concept" draggable="true" data-id="liquid-distancia" data-category="distancia">
+                    Partículas próximas unas a otras
+                </div>
+                <div class="concept" draggable="true" data-id="solid-distancia" data-category="distancia">
+                    Partículas muy juntas y ordenadas
+                </div>
+                <div class="concept" draggable="true" data-id="gas-movimiento" data-category="movimiento">
+                    Movimiento rápido y aleatorio en todas direcciones
+                </div>
+                <div class="concept" draggable="true" data-id="liquid-movimiento" data-category="movimiento">
+                    Movimiento limitado, se deslizan unas sobre otras
+                </div>
+                <div class="concept" draggable="true" data-id="solid-movimiento" data-category="movimiento">
+                    Vibración en posiciones fijas
+                </div>
+                <div class="concept" draggable="true" data-id="gas-interaccion" data-category="interaccion">
+                    Fuerzas intermoleculares muy débiles
+                </div>
+                <div class="concept" draggable="true" data-id="liquid-interaccion" data-category="interaccion">
+                    Fuerzas intermoleculares moderadas
+                </div>
+                <div class="concept" draggable="true" data-id="solid-interaccion" data-category="interaccion">
+                    Fuerzas intermoleculares muy fuertes
+                </div>
             </div>
         </div>
 
         <div class="controls">
-            <button class="btn btn-check" onclick="checkAnswers()">Verificar</button>
-            <button class="btn btn-reset" onclick="resetGame()">Reiniciar</button>
+            <button class="btn btn-primary" onclick="checkAnswers()">Verificar</button>
+            <button class="btn btn-secondary" onclick="resetActivity()">Reiniciar</button>
         </div>
 
         <div class="feedback" id="feedback"></div>
-        <div class="score" id="score">Progreso: 0/12</div>
     </div>
 
     <script>
         let draggedElement = null;
-        let correctAnswers = 0;
-        let totalAnswers = 12;
+        const totalConcepts = 12;
 
-        document.querySelectorAll('.option').forEach(option => {
-            option.addEventListener('dragstart', function(e) {
-                draggedElement = this;
-                this.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-            });
+        // Configurar drag and drop
+        function setupDragAndDrop() {
+            document.querySelectorAll('.concept').forEach(concept => {
+                concept.addEventListener('dragstart', function(e) {
+                    draggedElement = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
 
-            option.addEventListener('dragend', function(e) {
-                this.classList.remove('dragging');
-                draggedElement = null;
-            });
-        });
+                concept.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    draggedElement = null;
+                });
 
-        document.querySelectorAll('.drop-zone').forEach(zone => {
-            zone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('dragover');
-            });
-
-            zone.addEventListener('dragleave', function(e) {
-                this.classList.remove('dragover');
-            });
-
-            zone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('dragover');
-                
-                if (draggedElement && !draggedElement.classList.contains('used')) {
-                    if (this.querySelector('.option')) {
-                        const oldOption = this.querySelector('.option');
-                        oldOption.classList.remove('used');
-                        document.querySelector('.options-grid').appendChild(oldOption);
+                // Click para remover de la celda
+                concept.addEventListener('click', function() {
+                    if (this.parentElement.classList.contains('drop-zone')) {
+                        returnConceptToGrid(this);
                     }
-                    
-                    const optionClone = draggedElement.cloneNode(true);
-                    optionClone.draggable = false;
-                    this.innerHTML = '';
-                    this.appendChild(optionClone);
-                    this.classList.add('filled');
-                    
-                    draggedElement.classList.add('used');
-                    updateProgress();
-                }
+                });
             });
-        });
+
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                });
+
+                zone.addEventListener('dragleave', function() {
+                    this.classList.remove('dragover');
+                });
+
+                zone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                    
+                    if (draggedElement && !draggedElement.classList.contains('used')) {
+                        placeConcept(this, draggedElement);
+                    }
+                });
+
+                // Click en zona vacía para remover concepto
+                zone.addEventListener('click', function() {
+                    const concept = this.querySelector('.concept');
+                    if (concept) {
+                        returnConceptToGrid(concept);
+                    }
+                });
+            });
+        }
+
+        function placeConcept(dropZone, concept) {
+            // Si ya hay un concepto, devolverlo al grid
+            const existingConcept = dropZone.querySelector('.concept');
+            if (existingConcept) {
+                returnConceptToGrid(existingConcept);
+            }
+
+            // Clonar el concepto
+            const conceptClone = concept.cloneNode(true);
+            conceptClone.draggable = false;
+            conceptClone.addEventListener('click', function() {
+                returnConceptToGrid(this);
+            });
+
+            // Limpiar y agregar al drop zone
+            dropZone.innerHTML = '';
+            dropZone.appendChild(conceptClone);
+            dropZone.classList.add('filled');
+
+            // Marcar original como usado
+            concept.classList.add('used');
+            
+            updateProgress();
+        }
+
+        function returnConceptToGrid(concept) {
+            const dropZone = concept.parentElement;
+            const conceptId = concept.getAttribute('data-id');
+            
+            // Encontrar el concepto original en el grid
+            const originalConcept = document.querySelector(`.concepts-grid .concept[data-id="${conceptId}"]`);
+            
+            if (originalConcept) {
+                originalConcept.classList.remove('used');
+            }
+
+            // Limpiar el drop zone
+            dropZone.innerHTML = '';
+            dropZone.classList.remove('filled');
+            
+            updateProgress();
+        }
 
         function updateProgress() {
             const filledZones = document.querySelectorAll('.drop-zone.filled').length;
-            const progressPercent = (filledZones / totalAnswers) * 100;
-            document.querySelector('.progress-fill').style.width = progressPercent + '%';
-            document.getElementById('score').textContent = `Progreso: ${filledZones}/${totalAnswers}`;
+            const progress = (filledZones / totalConcepts) * 100;
+            
+            document.querySelector('.progress-bar').style.width = progress + '%';
+            document.querySelector('.score').textContent = `Completado: ${filledZones}/${totalConcepts}`;
         }
 
         function checkAnswers() {
-            const feedback = document.getElementById('feedback');
             let correct = 0;
-            let incorrect = 0;
+            const feedback = document.getElementById('feedback');
 
             document.querySelectorAll('.drop-zone').forEach(zone => {
                 const correctId = zone.getAttribute('data-correct');
-                const placedOption = zone.querySelector('.option');
+                const placedConcept = zone.querySelector('.concept');
                 
-                if (placedOption) {
-                    const placedId = placedOption.getAttribute('data-id');
-                    
-                    if (placedId === correctId) {
-                        zone.classList.add('correct');
-                        zone.classList.remove('incorrect');
-                        correct++;
-                    } else {
-                        zone.classList.add('incorrect');
-                        zone.classList.remove('correct');
-                        incorrect++;
-                    }
+                if (placedConcept && placedConcept.getAttribute('data-id') === correctId) {
+                    correct++;
                 }
             });
-
-            setTimeout(() => {
-                document.querySelectorAll('.drop-zone').forEach(zone => {
-                    zone.classList.remove('correct', 'incorrect');
-                });
-            }, 1000);
 
             feedback.style.display = 'block';
-            if (correct === totalAnswers) {
+            if (correct === totalConcepts) {
                 feedback.className = 'feedback success';
-                feedback.innerHTML = '🎉 ¡Perfecto! Has completado toda la tabla correctamente.';
+                feedback.textContent = '🎉 ¡Excelente! Todas las respuestas son correctas.';
             } else {
                 feedback.className = 'feedback error';
-                feedback.innerHTML = `📚 ${correct} correctas, ${incorrect} incorrectas. ¡Sigue intentando!`;
+                feedback.textContent = `📚 ${correct}/${totalConcepts} respuestas correctas. Revisa los conceptos incorrectos.`;
             }
-
-            correctAnswers = correct;
         }
 
-        function resetGame() {
+        function resetActivity() {
+            // Limpiar todas las zonas de drop
             document.querySelectorAll('.drop-zone').forEach(zone => {
                 zone.innerHTML = '';
-                zone.classList.remove('filled', 'correct', 'incorrect');
+                zone.classList.remove('filled');
             });
 
-            document.querySelectorAll('.option').forEach(option => {
-                option.classList.remove('used');
-                option.draggable = true;
+            // Restaurar todos los conceptos
+            document.querySelectorAll('.concept').forEach(concept => {
+                concept.classList.remove('used');
+                concept.draggable = true;
             });
 
-            const optionsGrid = document.querySelector('.options-grid');
-            document.querySelectorAll('.option').forEach(option => {
-                if (option.parentElement !== optionsGrid) {
-                    optionsGrid.appendChild(option);
+            // Mover conceptos de vuelta al grid
+            const conceptsGrid = document.querySelector('.concepts-grid');
+            document.querySelectorAll('.concept').forEach(concept => {
+                if (concept.parentElement !== conceptsGrid) {
+                    conceptsGrid.appendChild(concept);
                 }
             });
 
+            // Ocultar feedback y actualizar progreso
             document.getElementById('feedback').style.display = 'none';
-            correctAnswers = 0;
             updateProgress();
         }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragAndDrop();
+            updateProgress();
+        });
     </script>
 </body>
 </html>
