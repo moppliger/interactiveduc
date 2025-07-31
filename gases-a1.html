@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Estados de la Materia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .header {
+            background: #3b82f6;
+            color: white;
+            padding: 16px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .question-card {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .question {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .option {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95em;
+        }
+
+        .option:hover {
+            background: #f3f4f6;
+            border-color: #3b82f6;
+        }
+
+        .option.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .option.correct {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .option.incorrect {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+        }
+
+        .feedback {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 0.9em;
+            color: #0369a1;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .feedback.incorrect {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .progress {
+            font-size: 0.85em;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 32px 20px;
+            display: none;
+        }
+
+        .score-display.show {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.4em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .score-text {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .performance-message {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                margin: 8px;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .header {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="header">
+            <h1>Estados de la Materia</h1>
+            <p>Quiz de comprensión</p>
+        </div>
+        
+        <div class="content">
+            <div id="quiz-content">
+                <!-- Las preguntas se generarán dinámicamente aquí -->
+            </div>
+            
+            <div class="score-display" id="score-display">
+                <div class="score-circle" id="score-circle">0%</div>
+                <div class="score-text" id="score-text">¡Completaste el quiz!</div>
+                <div class="performance-message" id="performance-message"></div>
+                <button class="btn" onclick="restartQuiz()">Reintentar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Los gases NO poseen volumen fijo y se pueden expandir o contraer.",
+                options: ["Verdadero", "Falso"],
+                correct: 0,
+                explanation: "¡Correcto! Los gases no tienen volumen fijo y se adaptan al recipiente que los contiene, pudiendo expandirse o contraerse."
+            },
+            {
+                question: "¿Cuál es la principal característica del movimiento de las partículas en los sólidos?",
+                options: [
+                    "Se desplazan al azar en todas direcciones",
+                    "Se desplazan al azar, cercanas unas a otras",
+                    "Vibran en posiciones fijas"
+                ],
+                correct: 2,
+                explanation: "¡Exacto! En los sólidos, las partículas vibran en posiciones fijas debido a las fuertes interacciones entre ellas."
+            },
+            {
+                question: "Las partículas en los líquidos están muy cercanas entre sí, al igual que en los sólidos.",
+                options: ["Verdadero", "Falso"],
+                correct: 0,
+                explanation: "¡Correcto! Tanto en líquidos como en sólidos, las partículas están muy cercanas entre sí, a diferencia de los gases donde están lejanas."
+            },
+            {
+                question: "¿Qué tipo de interacción tienen las partículas en los gases?",
+                options: [
+                    "Interacciones fuertes",
+                    "Interacciones débiles",
+                    "No tienen interacciones"
+                ],
+                correct: 1,
+                explanation: "¡Perfecto! Las partículas en los gases tienen interacciones débiles entre sí, lo que les permite moverse libremente."
+            },
+            {
+                question: "Los líquidos toman la forma del recipiente que los contiene.",
+                options: ["Verdadero", "Falso"],
+                correct: 0,
+                explanation: "¡Correcto! Los líquidos tienen volumen fijo pero no forma definida, por lo que adoptan la forma del recipiente."
+            },
+            {
+                question: "¿Cuál de estos estados tiene las partículas más alejadas entre sí?",
+                options: [
+                    "Sólidos",
+                    "Líquidos", 
+                    "Gases"
+                ],
+                correct: 2,
+                explanation: "¡Excelente! En los gases, las partículas están lejanas entre sí, mientras que en líquidos y sólidos están cercanas."
+            },
+            {
+                question: "Algunos sólidos como la plastilina pueden cambiar su forma fácilmente.",
+                options: ["Verdadero", "Falso"],
+                correct: 0,
+                explanation: "¡Verdadero! Aunque los sólidos generalmente tienen forma definida, algunos como la plastilina pueden cambiar de forma con facilidad."
+            },
+            {
+                question: "¿Cómo se mueven las partículas en los líquidos?",
+                options: [
+                    "Vibran en posiciones fijas",
+                    "Se desplazan al azar, cercanas unas a otras",
+                    "Se desplazan al azar a altas velocidades"
+                ],
+                correct: 1,
+                explanation: "¡Correcto! En los líquidos, las partículas se desplazan al azar pero manteniéndose cercanas unas a otras."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function initQuiz() {
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const quizContent = document.getElementById('quiz-content');
+            const question = questions[currentQuestion];
+            
+            quizContent.innerHTML = `
+                <div class="question-card active">
+                    <div class="question">${currentQuestion + 1}. ${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => 
+                            `<div class="option" onclick="selectOption(${index})">${option}</div>`
+                        ).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="controls">
+                        <div class="progress">${currentQuestion + 1} de ${questions.length}</div>
+                        <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>
+                            ${currentQuestion === questions.length - 1 ? 'Resultados' : 'Siguiente'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            answered = false;
+        }
+
+        function selectOption(selectedIndex) {
+            if (answered) return;
+            
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            const question = questions[currentQuestion];
+            
+            answered = true;
+            options[selectedIndex].classList.add('selected');
+            
+            setTimeout(() => {
+                options[question.correct].classList.add('correct');
+                if (selectedIndex !== question.correct) {
+                    options[selectedIndex].classList.add('incorrect');
+                } else {
+                    score++;
+                }
+                
+                feedback.textContent = question.explanation;
+                feedback.classList.add('show');
+                feedback.classList.add(selectedIndex === question.correct ? 'correct' : 'incorrect');
+                
+                nextBtn.disabled = false;
+            }, 200);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-content').style.display = 'none';
+            const scoreDisplay = document.getElementById('score-display');
+            const scoreCircle = document.getElementById('score-circle');
+            const scoreText = document.getElementById('score-text');
+            const performanceMessage = document.getElementById('performance-message');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            scoreCircle.textContent = `${percentage}%`;
+            scoreText.textContent = `${score} de ${questions.length} correctas`;
+            
+            let message = "";
+            if (percentage >= 90) {
+                message = "¡Excelente dominio del tema! 🌟";
+                scoreCircle.style.background = "#10b981";
+            } else if (percentage >= 70) {
+                message = "¡Buen trabajo! 👍";
+                scoreCircle.style.background = "#f59e0b";
+            } else if (percentage >= 50) {
+                message = "Puedes mejorar. ¡Sigue estudiando! 📚";
+                scoreCircle.style.background = "#ef4444";
+            } else {
+                message = "Repasa el tema y vuelve a intentarlo 💪";
+                scoreCircle.style.background = "#ef4444";
+            }
+            
+            performanceMessage.textContent = message;
+            scoreDisplay.classList.add('show');
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('score-display').classList.remove('show');
+            showQuestion();
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
