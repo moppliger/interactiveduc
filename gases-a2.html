@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propiedades de los Gases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 12px;
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 16px;
+        }
+        
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+        }
+        
+        .quiz-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            font-size: 12px;
+        }
+        
+        .score {
+            margin-top: 8px;
+            padding: 8px;
+            background: #dbeafe;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .score.show {
+            display: block;
+        }
+        
+        .score-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+        }
+        
+        .questions {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .question {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 4px;
+        }
+        
+        .question-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .question-number {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .question-text {
+            flex: 1;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .options {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 4px;
+        }
+        
+        .option-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            border-color: #60a5fa;
+            background: #eff6ff;
+        }
+        
+        .option-btn.selected {
+            border-color: #3b82f6;
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .option-btn.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+            color: #047857;
+        }
+        
+        .option-btn.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+        
+        .feedback {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 4px;
+        }
+        
+        .icon {
+            width: 12px;
+            height: 12px;
+        }
+        
+        .icon-correct {
+            color: #10b981;
+        }
+        
+        .icon-incorrect {
+            color: #ef4444;
+        }
+        
+        .explanation-btn {
+            padding: 2px;
+            color: #3b82f6;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 12px;
+        }
+        
+        .explanation-btn:hover {
+            color: #1d4ed8;
+        }
+        
+        .explanation {
+            margin-top: 8px;
+            padding: 8px;
+            background: #eff6ff;
+            border-radius: 4px;
+            border-left: 2px solid #3b82f6;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+        }
+        
+        .explanation-text {
+            color: #1e40af;
+            font-size: 12px;
+        }
+        
+        .explanation-title {
+            font-weight: 500;
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
+        
+        .explanation.green {
+            background: #f0fdf4;
+            border-left-color: #10b981;
+        }
+        
+        .explanation.green .explanation-text,
+        .explanation.green .explanation-title {
+            color: #047857;
+        }
+        
+        .explanation.purple {
+            background: #faf5ff;
+            border-left-color: #8b5cf6;
+        }
+        
+        .explanation.purple .explanation-text,
+        .explanation.purple .explanation-title {
+            color: #7c3aed;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #15803d;
+        }
+        
+        .btn-secondary {
+            background: #4b5563;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #374151;
+        }
+        
+        .concepts {
+            margin-top: 16px;
+            padding: 12px;
+            background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+            border-radius: 4px;
+            border: 1px solid #c7d2fe;
+            display: none;
+        }
+        
+        .concepts.show {
+            display: block;
+        }
+        
+        .concepts-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+        
+        .concepts-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .concepts-list li {
+            color: #1d4ed8;
+            font-size: 12px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="quiz-card">
+            <div class="header">
+                <h1 class="title">Propiedades de los Gases</h1>
+                <p class="subtitle">Selecciona la opción correcta para cada espacio</p>
+                <div class="score" id="scoreDiv">
+                    <p class="score-text" id="scoreText">Puntuación: 0/9</p>
+                </div>
+            </div>
+
+            <div class="questions">
+                <!-- Pregunta 1 -->
+                <div class="question">
+                    <div class="question-content">
+                        <span class="question-number">1</span>
+                        <div style="flex: 1;">
+                            <p class="question-text">
+                                Cuando la temperatura de un gas encerrado en un recipiente aumenta, la presión del gas
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q1', 'aumenta')" data-question="q1" data-option="aumenta">aumenta</button>
+                                    <button class="option-btn" onclick="selectAnswer('q1', 'disminuye')" data-question="q1" data-option="disminuye">disminuye</button>
+                                </span>
+                                <span class="feedback" id="feedback-q1"></span>
+                            </p>
+                            <div class="explanation" id="explanation-q1">
+                                <p class="explanation-text">Cuando calentamos un gas, sus partículas se mueven más rápido y golpean las paredes del recipiente con más fuerza, aumentando la presión.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="question">
+                    <div class="question-content">
+                        <span class="question-number">2</span>
+                        <div style="flex: 1;">
+                            <p class="question-text">
+                                Si un gas está en un recipiente flexible y la presión externa disminuye, el gas experimentará
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q2a', 'expansión')" data-question="q2a" data-option="expansión">expansión</button>
+                                    <button class="option-btn" onclick="selectAnswer('q2a', 'compresión')" data-question="q2a" data-option="compresión">compresión</button>
+                                </span>
+                                <span class="feedback" id="feedback-q2a"></span>,
+                                por lo que su volumen
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q2b', 'aumenta')" data-question="q2b" data-option="aumenta">aumenta</button>
+                                    <button class="option-btn" onclick="selectAnswer('q2b', 'disminuye')" data-question="q2b" data-option="disminuye">disminuye</button>
+                                </span>
+                                <span class="feedback" id="feedback-q2b"></span>
+                                y su densidad
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q2c', 'aumenta')" data-question="q2c" data-option="aumenta">aumenta</button>
+                                    <button class="option-btn" onclick="selectAnswer('q2c', 'disminuye')" data-question="q2c" data-option="disminuye">disminuye</button>
+                                </span>
+                                <span class="feedback" id="feedback-q2c"></span>
+                            </p>
+                            <div class="explanation" id="explanation-q2a">
+                                <p class="explanation-title">Expansión:</p>
+                                <p class="explanation-text">Si disminuye la presión sobre un gas, este tiende a ocupar más espacio, expandiéndose.</p>
+                            </div>
+                            <div class="explanation green" id="explanation-q2b">
+                                <p class="explanation-title">Volumen:</p>
+                                <p class="explanation-text">Al expandirse, el gas ocupa un volumen mayor porque tiene más espacio disponible.</p>
+                            </div>
+                            <div class="explanation purple" id="explanation-q2c">
+                                <p class="explanation-title">Densidad:</p>
+                                <p class="explanation-text">Al ocupar más espacio con la misma cantidad de gas, hay menos partículas por unidad de volumen, por lo que la densidad disminuye.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="question">
+                    <div class="question-content">
+                        <span class="question-number">3</span>
+                        <div style="flex: 1;">
+                            <p class="question-text">
+                                Cuando subimos una montaña, la altura aumenta y la presión atmosférica
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q3', 'aumenta')" data-question="q3" data-option="aumenta">aumenta</button>
+                                    <button class="option-btn" onclick="selectAnswer('q3', 'disminuye')" data-question="q3" data-option="disminuye">disminuye</button>
+                                </span>
+                                <span class="feedback" id="feedback-q3"></span>,
+                                porque hay menos cantidad de aire ejerciendo peso sobre nosotros.
+                            </p>
+                            <div class="explanation" id="explanation-q3">
+                                <p class="explanation-text">A mayor altura hay menos aire "apilado" encima de nosotros, por lo que la presión atmosférica es menor.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 4 -->
+                <div class="question">
+                    <div class="question-content">
+                        <span class="question-number">4</span>
+                        <div style="flex: 1;">
+                            <p class="question-text">
+                                Los gases pueden moverse libremente y ocupar todo el espacio disponible.
+                                Esto sucede porque la atracción entre sus partículas es
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q4', 'débil')" data-question="q4" data-option="débil">débil</button>
+                                    <button class="option-btn" onclick="selectAnswer('q4', 'fuerte')" data-question="q4" data-option="fuerte">fuerte</button>
+                                </span>
+                                <span class="feedback" id="feedback-q4"></span>
+                            </p>
+                            <div class="explanation" id="explanation-q4">
+                                <p class="explanation-text">Las partículas de gas tienen muy poca atracción entre ellas, por eso pueden moverse libremente y separarse mucho.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 5 -->
+                <div class="question">
+                    <div class="question-content">
+                        <span class="question-number">5</span>
+                        <div style="flex: 1;">
+                            <p class="question-text">
+                                Si en un recipiente cerrado se inyectan dos gases, la presión total dentro del recipiente será igual a la
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q5', 'suma')" data-question="q5" data-option="suma">suma</button>
+                                    <button class="option-btn" onclick="selectAnswer('q5', 'resta')" data-question="q5" data-option="resta">resta</button>
+                                </span>
+                                <span class="feedback" id="feedback-q5"></span>
+                                de las presiones de cada gas por separado.
+                            </p>
+                            <div class="explanation" id="explanation-q5">
+                                <p class="explanation-text">Cada gas ejerce su propia presión independientemente. La presión total es la suma de todas las presiones individuales.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 6 -->
+                <div class="question">
+                    <div class="question-content">
+                        <span class="question-number">6</span>
+                        <div style="flex: 1;">
+                            <p class="question-text">
+                                Si aplicamos dos perfumes en una habitación, uno con partículas pesadas y otro con partículas ligeras,
+                                ambos sufrirán el proceso de
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q6a', 'difusión')" data-question="q6a" data-option="difusión">difusión</button>
+                                    <button class="option-btn" onclick="selectAnswer('q6a', 'efusión')" data-question="q6a" data-option="efusión">efusión</button>
+                                </span>
+                                <span class="feedback" id="feedback-q6a"></span>,
+                                llenando la habitación más rápidamente el perfume de partículas de
+                                <span class="options">
+                                    <button class="option-btn" onclick="selectAnswer('q6b', 'menor')" data-question="q6b" data-option="menor">menor</button>
+                                    <button class="option-btn" onclick="selectAnswer('q6b', 'mayor')" data-question="q6b" data-option="mayor">mayor</button>
+                                </span>
+                                <span class="feedback" id="feedback-q6b"></span>
+                                masa.
+                            </p>
+                            <div class="explanation" id="explanation-q6a">
+                                <p class="explanation-title">Difusión:</p>
+                                <p class="explanation-text">La difusión es el proceso por el cual las partículas de una sustancia se extienden y mezclan en el espacio.</p>
+                            </div>
+                            <div class="explanation green" id="explanation-q6b">
+                                <p class="explanation-title">Masa y velocidad:</p>
+                                <p class="explanation-text">Las partículas más ligeras se mueven más rápido, por eso el perfume con partículas de menor masa se esparce más rápidamente.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswers()">
+                    Verificar Respuestas
+                </button>
+                <div class="hidden" id="afterSubmit">
+                    <button class="btn btn-success" onclick="showAllExplanations()">
+                        💡 Ver Explicaciones
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetQuiz()">
+                        🔄 Reiniciar
+                    </button>
+                </div>
+            </div>
+
+            <div class="concepts" id="concepts">
+                <h3 class="concepts-title">🔬 Conceptos Importantes:</h3>
+                <ul class="concepts-list">
+                    <li>• Las partículas de gas se mueven constantemente</li>
+                    <li>• La temperatura afecta la velocidad de las partículas</li>
+                    <li>• Los gases ocupan todo el espacio disponible</li>
+                    <li>• La difusión permite que los gases se mezclen</li>
+                    <li>• La presión atmosférica cambia con la altura</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var answers = {};
+        var correctAnswers = {
+            q1: 'aumenta',
+            q2a: 'expansión',
+            q2b: 'aumenta',
+            q2c: 'disminuye',
+            q3: 'disminuye',
+            q4: 'débil',
+            q5: 'suma',
+            q6a: 'difusión',
+            q6b: 'menor'
+        };
+        var submitted = false;
+
+        function selectAnswer(question, option) {
+            if (submitted) return;
+            
+            answers[question] = option;
+            
+            // Remove selected class from all buttons of this question
+            var questionButtons = document.querySelectorAll('[data-question="' + question + '"]');
+            for (var i = 0; i < questionButtons.length; i++) {
+                questionButtons[i].classList.remove('selected');
+            }
+            
+            // Add selected class to clicked button
+            var clickedButton = document.querySelector('[data-question="' + question + '"][data-option="' + option + '"]');
+            clickedButton.classList.add('selected');
+        }
+
+        function submitAnswers() {
+            submitted = true;
+            
+            // Disable all buttons and show feedback
+            var allButtons = document.querySelectorAll('.option-btn');
+            for (var i = 0; i < allButtons.length; i++) {
+                var btn = allButtons[i];
+                btn.disabled = true;
+                var question = btn.getAttribute('data-question');
+                var option = btn.getAttribute('data-option');
+                
+                if (answers[question] === option) {
+                    if (answers[question] === correctAnswers[question]) {
+                        btn.classList.add('correct');
+                    } else {
+                        btn.classList.add('incorrect');
+                    }
+                }
+            }
+
+            // Show feedback icons and explanation buttons
+            var questions = Object.keys(correctAnswers);
+            for (var i = 0; i < questions.length; i++) {
+                var question = questions[i];
+                var feedbackDiv = document.getElementById('feedback-' + question);
+                var isCorrect = answers[question] === correctAnswers[question];
+                
+                var iconHTML = isCorrect 
+                    ? '<svg class="icon icon-correct" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>'
+                    : '<svg class="icon icon-incorrect" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>';
+                
+                feedbackDiv.innerHTML = iconHTML + '<button class="explanation-btn" onclick="toggleExplanation(\'' + question + '\')" title="Ver explicación">💡</button>';
+            }
+
+            // Update score
+            updateScore();
+            
+            // Show controls and concepts
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('afterSubmit').classList.remove('hidden');
+            document.getElementById('concepts').classList.add('show');
+        }
+
+        function toggleExplanation(question) {
+            var explanation = document.getElementById('explanation-' + question);
+            if (explanation.classList.contains('show')) {
+                explanation.classList.remove('show');
+            } else {
+                explanation.classList.add('show');
+            }
+        }
+
+        function showAllExplanations() {
+            var questions = Object.keys(correctAnswers);
+            for (var i = 0; i < questions.length; i++) {
+                var explanation = document.getElementById('explanation-' + questions[i]);
+                explanation.classList.add('show');
+            }
+        }
+
+        function updateScore() {
+            var correct = 0;
+            var questions = Object.keys(correctAnswers);
+            for (var i = 0; i < questions.length; i++) {
+                if (answers[questions[i]] === correctAnswers[questions[i]]) {
+                    correct++;
+                }
+            }
+            var total = questions.length;
+            document.getElementById('scoreText').textContent = 'Puntuación: ' + correct + '/' + total;
+            document.getElementById('scoreDiv').classList.add('show');
+        }
+
+        function resetQuiz() {
+            // Reset answers
+            answers = {};
+            submitted = false;
+            
+            // Reset all buttons
+            var allButtons = document.querySelectorAll('.option-btn');
+            for (var i = 0; i < allButtons.length; i++) {
+                var btn = allButtons[i];
+                btn.disabled = false;
+                btn.classList.remove('selected', 'correct', 'incorrect');
+            }
+            
+            // Clear feedback
+            var questions = Object.keys(correctAnswers);
+            for (var i = 0; i < questions.length; i++) {
+                document.getElementById('feedback-' + questions[i]).innerHTML = '';
+                document.getElementById('explanation-' + questions[i]).classList.remove('show');
+            }
+            
+            // Reset controls
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('afterSubmit').classList.add('hidden');
+            document.getElementById('scoreDiv').classList.remove('show');
+            document.getElementById('concepts').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
