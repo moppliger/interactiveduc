@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buzzer Pasa Palabra</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f5f5f5; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; }
+  h1 { font-size: 22px; font-weight: 500; text-align: center; margin-bottom: 1rem; color: #1a1a1a; }
+  .status-bar { text-align: center; min-height: 60px; margin-bottom: 1.5rem; }
+  .waiting { font-size: 15px; color: #888; }
+  .winner-label { font-size: 13px; color: #888; margin-bottom: 4px; }
+  .winner-name { font-size: 26px; font-weight: 500; }
+  .teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  .team-btn {
+    width: 150px; height: 150px; border-radius: 50%; border: none; cursor: pointer;
+    font-size: 15px; font-weight: 500; color: white;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    transition: transform 0.08s, opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  @media (min-width: 500px) { .team-btn { width: 180px; height: 180px; } }
+  .team-btn:active { transform: scale(0.94); }
+  .team-btn.locked { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+  .team-btn.winner { animation: pulse 0.6s ease; }
+  .team-score { font-size: 13px; opacity: 0.85; }
+  @keyframes pulse { 0%{transform:scale(1)} 40%{transform:scale(1.13)} 100%{transform:scale(1)} }
+  .c0 { background: #178ABF; }
+  .c1 { background: #D85A30; }
+  .c2 { background: #1D9E75; }
+  .c3 { background: #7F77DD; }
+  .controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .ctrl-btn { padding: 8px 20px; font-size: 13px; border-radius: 8px; border: 1px solid #ccc; background: white; cursor: pointer; color: #333; }
+  .ctrl-btn:hover { background: #f0f0f0; }
+  .section-label { font-size: 12px; color: #aaa; text-align: center; margin-bottom: 8px; }
+  .names-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 340px; }
+  .team-name-input { border: 1.5px solid #ccc; border-radius: 8px; padding: 6px 10px; font-size: 13px; width: 100%; text-align: center; }
+</style>
+</head>
+<body>
+<h1>🎯 Buzzer Pasa Palabra</h1>
+
+<div class="status-bar" id="statusBar">
+  <p class="waiting">Esperando... ¡que presione el primer equipo!</p>
+</div>
+
+<div class="teams-grid">
+  <button class="team-btn c0" id="tbtn0"><span id="tname0">Equipo 1</span><span class="team-score" id="tscore0">0 pts</span></button>
+  <button class="team-btn c1" id="tbtn1"><span id="tname1">Equipo 2</span><span class="team-score" id="tscore1">0 pts</span></button>
+  <button class="team-btn c2" id="tbtn2"><span id="tname2">Equipo 3</span><span class="team-score" id="tscore2">0 pts</span></button>
+  <button class="team-btn c3" id="tbtn3"><span id="tname3">Equipo 4</span><span class="team-score" id="tscore3">0 pts</span></button>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" id="resetBtn">↺ Resetear turno</button>
+  <button class="ctrl-btn" id="clearScoreBtn">🗑 Borrar puntajes</button>
+  <label class="ctrl-btn" style="cursor:pointer;display:flex;align-items:center;gap:6px;">
+    <input type="checkbox" id="soundOn" checked> 🔔 Sonido
+  </label>
+</div>
+
+<div>
+  <p class="section-label">Nombres de equipos</p>
+  <div class="names-grid">
+    <input class="team-name-input" id="inp0" value="Equipo 1" style="border-color:#178ABF">
+    <input class="team-name-input" id="inp1" value="Equipo 2" style="border-color:#D85A30">
+    <input class="team-name-input" id="inp2" value="Equipo 3" style="border-color:#1D9E75">
+    <input class="team-name-input" id="inp3" value="Equipo 4" style="border-color:#7F77DD">
+  </div>
+</div>
+
+<script>
+const COLORS = ['#178ABF','#D85A30','#1D9E75','#7F77DD'];
+const scores = [0,0,0,0];
+let locked = false;
+
+function playBuzz(i) {
+  if (!document.getElementById('soundOn').checked) return;
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'square';
+    o.frequency.value = 400 + i*90;
+    g.gain.setValueAtTime(0.18, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+    o.start(); o.stop(ctx.currentTime + 0.35);
+  } catch(e){}
+}
+
+function buzz(i) {
+  if (locked) return;
+  locked = true;
+  scores[i]++;
+  playBuzz(i);
+  for (let j=0;j<4;j++) {
+    const b = document.getElementById('tbtn'+j);
+    if (j!==i) b.classList.add('locked');
+    else b.classList.add('winner');
+    document.getElementById('tscore'+j).textContent = scores[j]+' pts';
+  }
+  const name = document.getElementById('tname'+i).textContent;
+  document.getElementById('statusBar').innerHTML =
+    `<p class="winner-label">¡Primero en presionar!</p><p class="winner-name" style="color:${COLORS[i]}">${name}</p>`;
+}
+
+for (let i=0;i<4;i++) {
+  (function(idx){
+    document.getElementById('tbtn'+idx).addEventListener('pointerdown', ()=>buzz(idx));
+    document.getElementById('inp'+idx).addEventListener('input', function(){
+      document.getElementById('tname'+idx).textContent = this.value || 'Equipo '+(idx+1);
+    });
+  })(i);
+}
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  locked = false;
+  for (let i=0;i<4;i++) document.getElementById('tbtn'+i).classList.remove('locked','winner');
+  document.getElementById('statusBar').innerHTML = '<p class="waiting">Esperando... ¡que presione el primer equipo!</p>';
+});
+
+document.getElementById('clearScoreBtn').addEventListener('click', ()=>{
+  for (let i=0;i<4;i++) scores[i]=0;
+  document.getElementById('resetBtn').click();
+  for (let i=0;i<4;i++) document.getElementById('tscore'+i).textContent = '0 pts';
+});
+</script>
+</body>
+</html>
